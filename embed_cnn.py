@@ -73,7 +73,6 @@ def cnn_embedding(args, h, data_file):
 
     xt = _batch_embed(args, model.embedding_net, h.xt, device, char_alphabet=char_alphabet)
     start_time = time.time()
-    xt = []
     xb = _batch_embed(args, model.embedding_net, h.xb, device, char_alphabet=char_alphabet)
     embed_time = time.time() - start_time
     xq = _batch_embed(args, model.embedding_net, h.xq, device, char_alphabet=char_alphabet)
@@ -86,6 +85,7 @@ def cnn_embedding(args, h, data_file):
         np.save("{}/{}embedding_xt".format(data_file, args.embed_dir), xt)
         np.save("{}/{}embedding_xq".format(data_file, args.embed_dir), xq)
 
-    if args.recall:
-        test_recall(xb, xq, h.query_knn)
+    if args.recall :
+        if self.q_front:
+            test_recall(xb, xq, h.query_knn)
     return xq, xb, xt

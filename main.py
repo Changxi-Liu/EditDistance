@@ -38,8 +38,15 @@ class DataHandler:
         self.nq = args.nq
         self.maxl = args.maxl
         self.dataset = args.dataset
-
+    
         self.lines = readlines("data/{}".format(args.dataset))
+	    
+        if(self.dataset == "references"):
+            self.nq = int( self.lines[0] )
+            self.lines = self.lines[1:]
+            self.q_front = 1
+        else:
+            self.q_front = 0
         if self.maxl != 0:
             self.lines = [l[: self.maxl] for l in self.lines]
         self.ni = len(self.lines)
@@ -51,7 +58,7 @@ class DataHandler:
 
         self.load_ids()
         self.load_dist()
-
+	
         self.string_t = [self.lines[i] for i in self.train_ids]
         self.string_q = [self.lines[i] for i in self.query_ids]
         self.string_b = [self.lines[i] for i in self.base_ids]
@@ -113,21 +120,33 @@ class DataHandler:
 
     def generate_ids(self):
         np.random.seed(self.args.shuffle_seed)
-        idx = np.arange(self.ni)
-        np.random.shuffle(idx)
-        print("# shuffled index: ", idx)
-        self.train_ids = idx[: self.nt]
-        self.query_ids = idx[self.nt : self.nq + self.nt]
-        self.base_ids = idx[self.nq + self.nt : self.nq + self.nt + self.nb]
+        if self.q_front == 1:
+            self.query_ids = np.arange( self.nq )
+            
+            idx = np.arange(self.nq,self.ni)
+            np.random.shuffle(idx)
+            print("# shuffled index: ", idx)
+
+            self.train_ids = idx[: self.nt]
+
+            self.base_ids = idx[ self.nt : self.nt + self.nb]
+        else:
+            idx = np.arange(self.ni)
+            np.random.shuffle(idx)
+            print("# shuffled index: ", idx)
+            self.train_ids = idx[: self.nt]
+            self.query_ids = idx[self.nt : self.nq + self.nt]
+            self.base_ids = idx[self.nq + self.nt : self.nq + self.nt + self.nb]
 
     def generate_dist(self):
         self.train_dist, self.train_knn = get_dist_knn(
             [self.lines[i] for i in self.train_ids]
         )
-        self.query_dist, self.query_knn = get_dist_knn(
-            [self.lines[i] for i in self.query_ids],
-            [self.lines[i] for i in self.base_ids],
-        )
+        if self.q_front == 0:
+            self.query_dist, self.query_knn = get_dist_knn(
+                [self.lines[i] for i in self.query_ids],
+                [self.lines[i] for i in self.base_ids],
+            )
 
     def load_ids(self):
         idx_dir = "{}/".format(self.data_f)
@@ -158,22 +177,25 @@ class DataHandler:
             self.generate_dist()
             np.save(idx_dir + "train_dist.npy", self.train_dist)
             np.save(idx_dir + "train_knn.npy", self.train_knn)
-            np.save(idx_dir + "query_dist.npy", self.query_dist)
-            np.save(idx_dir + "query_knn.npy", self.query_knn)
+            if self.q_front==0:
+                np.save(idx_dir + "query_dist.npy", self.query_dist)
+                np.save(idx_dir + "query_knn.npy", self.query_knn)
         else:
             print("# loading dist and knn from file")
             self.train_dist = np.load(idx_dir + "train_dist.npy")
             self.train_knn = np.load(idx_dir + "train_knn.npy")
-            self.query_dist = np.load(idx_dir + "query_dist.npy")
-            self.query_knn = np.load(idx_dir + "query_knn.npy")
+            if self.q_front == 0:
+                self.query_dist = np.load(idx_dir + "query_dist.npy")
+                self.query_knn = np.load(idx_dir + "query_knn.npy")
+                print("# query dist : {}".format(self.query_knn.shape))
             print("# train dist : {}".format(self.train_knn.shape))
-            print("# query dist : {}".format(self.query_knn.shape))
 
     def set_nb(self, nb):
         if nb < len(self.base_ids):
             self.base_ids = self.base_ids[:nb]
-            self.query_dist = self.query_dist[:, :nb]
-            self.query_knn = get_knn(self.query_dist)
+            if self.q_front == 0:
+                self.query_dist = self.query_dist[:, :nb]
+                self.query_knn = get_knn(self.query_dist)
             self.xb.sig = self.xb.sig[:nb]
 
 
