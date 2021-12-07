@@ -75,12 +75,22 @@ def calculate( ids , embs,n_thread,progress = True ):
         #    print( id1,correct_dict[str(cluster_id)])
     print( "Accuracy : ", right_numer * 1. / num  )
 #calculate( train_ids, xt ,cpu_count()//2)
-xb_string = [""] * 10000
+xt_string = [""] * len(train_ids)
 i = 0
-for elem in base_ids[0:10000]:
+for elem in train_ids:
+    xt_string[ i ] = cluster_lines[elem]
+    i = i+1
+
+calculate( train_ids, xt_string ,cpu_count()//2) 
+
+
+xb_string = [""] * len(base_ids)
+i = 0
+for elem in base_ids:
     xb_string[ i ] = cluster_lines[elem]
     i = i+1
-calculate( base_ids[0:10000], xb_string[0:10000] ,cpu_count()//2) 
+
+calculate( base_ids , xb_string  ,cpu_count()//2,"base") 
 #calculate( query_ids, xq, cpu_count()//2 ) 
 #data = l2_dist( xq, xt[0:1] )
 #print(data )

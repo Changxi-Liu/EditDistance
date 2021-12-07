@@ -61,9 +61,10 @@ def get_levenshtein_cluster( para ):
     return cluster_ids
 
 
-def calculate( ids , embs,n_thread,progress = True ):
+def calculate( ids , embs,n_thread,flag="train", progress = True ):
     right_numer = 0
     num = len( ids)
+    print( num )
     print( embs.shape )
     bar = tqdm if progress else lambda iterable, total, desc: iterable
     def all_pair(embs_para,  n_thread):
@@ -75,7 +76,7 @@ def calculate( ids , embs,n_thread,progress = True ):
                     desc="# clustering ",
                 ))
             return np.array(edit)
-    cluster_file = "cluster.npy"
+    cluster_file = flag + "_cluster.npy"
     if not os.path.isfile( path+"/" + cluster_file):
         clusters = all_pair( embs,n_thread )
         np.save( path + "/" + cluster_file , clusters )
@@ -101,8 +102,9 @@ def calculate( ids , embs,n_thread,progress = True ):
             if id1 in correct_dict[ cluster_str ]:
                 right_numer += 1
         print( "K = ",K[ki] ," Accuracy : ", right_numer * 1. / num  )
-#calculate( train_ids, xt ,cpu_count()//2) 
-calculate( base_ids[0:10000], xb[0:10000] ,cpu_count()//2) 
+calculate( train_ids, xt ,cpu_count()//2) 
+#calculate( base_ids[0:10000], xb[0:10000] ,cpu_count()//2) 
+calculate( base_ids , xb  ,cpu_count()//2,"base") 
 #calculate( query_ids, xq, cpu_count()//2 ) 
 #data = l2_dist( xq, xt[0:1] )
-print(data )
+#print(data )

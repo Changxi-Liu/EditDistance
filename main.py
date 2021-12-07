@@ -51,7 +51,7 @@ class DataHandler:
             self.lines = [l[: self.maxl] for l in self.lines]
         self.ni = len(self.lines)
         self.nb = self.ni - self.nq - self.nt
-
+        print("nb : ", self.nb)
         start_time = time.time()
         self.C, self.M, self.char_ids, self.alphabet = word2sig(self.lines, max_length=None)
         print("# Loading time: {}".format(time.time() - start_time))
@@ -62,7 +62,7 @@ class DataHandler:
         self.string_t = [self.lines[i] for i in self.train_ids]
         self.string_q = [self.lines[i] for i in self.query_ids]
         self.string_b = [self.lines[i] for i in self.base_ids]
-
+        print("base ids",len(self.base_ids))
         self.xt = StringDataset(
             self.C, self.M, [self.char_ids[i] for i in self.train_ids]
         )
@@ -217,7 +217,8 @@ def get_args():
     parser.add_argument("--nt", type=int, default=1000, help="# of training samples")
     parser.add_argument("--nr", type=int, default=1000, help="# of generated training samples")
     parser.add_argument("--nq", type=int, default=1000, help="# of query items")
-    parser.add_argument("--nb", type=int, default=1385451, help="# of base items")
+   #parser.add_argument("--nb", type=int, default=1385451, help="# of base items")
+    parser.add_argument("--nb", type=int, default=3002112, help="# of base items")
     parser.add_argument("--k", type=int, default=100, help="# sampling threshold")
     parser.add_argument("--epochs", type=int, default=4, help="# of epochs")
     parser.add_argument(

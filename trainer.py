@@ -26,7 +26,11 @@ def train_epoch(args, train_set, device):
     elif args.dataset == "uniref":
         EmbeddingNet = UnirefCNN
     elif args.dataset == "references":
-        EmbeddingNet = QuerylogCNN
+#        EmbeddingNet = TwoLayerCNN
+#        EmbeddingNet = QuerylogCNN
+#        EmbeddingNet = QuerylogCNN2
+#        EmbeddingNet = QuerylogCNN3
+        EmbeddingNet = QuerylogCNN4
     else:
         EmbeddingNet = MultiLayerCNN
 
