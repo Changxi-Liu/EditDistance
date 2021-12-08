@@ -346,7 +346,43 @@ class QuerylogCNN2(nn.Module):
         )
 
         # Size after pooling
-        self.flat_size = M // 16 * C // self.mtc_input * channel
+        self.flat_size = M // (2**4) * C // self.mtc_input * channel
+        print("# self.flat_size ", self.flat_size)
+        self.fc1 = nn.Linear(self.flat_size, embedding)
+
+    def forward(self, x: torch.Tensor):
+        N = len(x)
+        x = x.view(-1, self.mtc_input, self.M)
+
+        x = self.conv(x)
+        # print(x.size())
+        x = x.view(N, self.flat_size)
+        x = self.fc1(x)
+
+        return x
+class QuerylogCNN5(nn.Module):
+    def __init__(self, C, M, embedding, channel, mtc_input):
+        super(QuerylogCNN5, self).__init__()
+        self.C = C
+        self.M = M
+        self.embedding = embedding
+        self.mtc_input = C if mtc_input else 1
+
+        self.conv = nn.Sequential(
+            nn.Conv1d(self.mtc_input, channel, 3, 1, padding=1, bias=False),
+            POOL(2),
+            nn.Conv1d(channel, channel, 3, 1, padding=1, bias=False),
+            POOL(2),
+            nn.Conv1d(channel, channel, 3, 1, padding=1, bias=False),
+            POOL(2),
+            nn.Conv1d(channel, channel, 3, 1, padding=1, bias=False),
+            POOL(2),
+            nn.Conv1d(channel, channel, 3, 1, padding=1, bias=False),
+            POOL(2),
+        )
+
+        # Size after pooling
+        self.flat_size = M // (2**5) * C // self.mtc_input * channel
         print("# self.flat_size ", self.flat_size)
         self.fc1 = nn.Linear(self.flat_size, embedding)
 
@@ -361,9 +397,10 @@ class QuerylogCNN2(nn.Module):
 
         return x
 
-class QuerylogCNN4(nn.Module):
+
+class QuerylogCNN6(nn.Module):
     def __init__(self, C, M, embedding, channel, mtc_input):
-        super(QuerylogCNN4, self).__init__()
+        super(QuerylogCNN6, self).__init__()
         self.C = C
         self.M = M
         self.embedding = embedding

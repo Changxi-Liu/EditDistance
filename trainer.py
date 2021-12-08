@@ -30,7 +30,9 @@ def train_epoch(args, train_set, device):
 #        EmbeddingNet = QuerylogCNN
 #        EmbeddingNet = QuerylogCNN2
 #        EmbeddingNet = QuerylogCNN3
-        EmbeddingNet = QuerylogCNN4
+#        EmbeddingNet = QuerylogCNN4
+#        EmbeddingNet = QuerylogCNN5
+        EmbeddingNet = QuerylogCNN6
     else:
         EmbeddingNet = MultiLayerCNN
 

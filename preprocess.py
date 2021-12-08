@@ -38,6 +38,19 @@ for elem in string2ids.keys():
     for i in range(1,len(vec)):
         vec[i] = vec[i] + cluster_num
 print( sum_num ) 
+id2clusterid = dict()
+cluster_id = 0
+for elem in string2ids.keys():
+    vec = string2ids[elem]
+    for i in range(len(vec)):
+        id2clusterid[ vec[i] ] = cluster_id
+    cluster_id += 1
+
+json_data = json.dumps( id2clusterid , sort_keys=True, indent=4)
+with open("data/references_clusterid","w") as f:
+    f.write(json_data)
+
+
 json_data = json.dumps( string2ids , sort_keys=True, indent=4)
 with open("data/references_cluster","w") as f:
     f.write(json_data)

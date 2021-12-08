@@ -1,12 +1,8 @@
 # [Convolutional Embedding for Edit Distance (SIGIR 20)](https://arxiv.org/abs/2001.11692)
 
-In this project, we design and implement a deep learning model, which
-transforms strings into real number vectors  while  preserving  their 
-neighboring relation.  Specifically,  if  the  edit  distance  of two 
-strings x and y is small,  the L2-distance of their embeddings should 
-also  be  small.  With  this  model,  we can transform expensive edit 
-distance  computation to cheaper L2-distance computation and speed up
-string similarity search. 
+This is the CS6219 module project merged from https://github.com/xinyandai/string-embed.git.
+We have modified convolutional neural network structure and execution procedure to predict the clustering status of each DNA strands. 
+There are also preprocess.py for preprocessing DNA data and check_accuracy.py to check the accuracy of embedded vector.
 
 ### before run
 Please install PyTorch refer to [PyTorch](https://pytorch.org/get-started/locally/) 
@@ -18,17 +14,16 @@ pip install transformers
 
 
 ### start training
-
+- move dna data into data/ directory
+- ./preprocess.py
 - train CNN-ED model
 ```    
-python main.py --dataset word --nt 1000 --nq 1000 --epochs 20 --save-split --recall
+python main.py --dataset word --nt 10000 --nq 1000 --epochs 20 --save-split --save-embed --embed-dim 16
 ```
-
-- test bert embedding
+- derive the accuracy 
 ```
-python main.py --dataset word --nt 1000 --nq 1000 --bert --save-split --recall
+./check_accuracy.py --path ${model_path} --norm 2
 ```
-
 ##### optional arguments:
       -h, --help            show this help message and exit
       --dataset             dataset name which is under folder ./data/

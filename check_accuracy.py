@@ -8,7 +8,25 @@ from utils import arg_sort,l2_dist
 import os
 import Levenshtein
 from multiprocessing import cpu_count
-path = ( sys.argv[1] )
+import argparse
+def get_args():
+    parser = argparse.ArgumentParser(description="HyperParameters for String Embedding")
+    parser.add_argument("--norm", type=int , default=2, help="norm type")
+    parser.add_argument(
+        "--shuffle-seed", type=int, default=808, help="seed for shuffle"
+    )
+
+    parser.add_argument("--path", type=str, default=None, help="path")
+    args = parser.parse_args()
+
+    return args
+args = get_args()
+path = args.path
+norm_type = args.norm
+if norm_type == -1:
+    norm_type = np.inf
+print(norm_type)
+#exit(1)
 def get_embed( path ):
     base_ids = np.load( path + "base_idx.npy")
     query_ids = np.load( path + "query_idx.npy" )
@@ -36,8 +54,9 @@ def get_cluster( emb ):
     xq_shape = xq.shape
     length = xq_shape[0]
     norms = [0] * length
-    for i in range( xq_shape[0]): 
-        new_data = np.linalg.norm( emb-xq[i] )
+    for i in range( xq_shape[0]):
+        
+        new_data = np.linalg.norm( emb-xq[i],norm_type )
         norms[i] = new_data
     sort_norm_idx = np.argsort( norms )
     return sort_norm_idx[ : max_K ] 
@@ -102,9 +121,9 @@ def calculate( ids , embs,n_thread,flag="train", progress = True ):
             if id1 in correct_dict[ cluster_str ]:
                 right_numer += 1
         print( "K = ",K[ki] ," Accuracy : ", right_numer * 1. / num  )
-calculate( train_ids, xt ,cpu_count()//2) 
+calculate( train_ids, xt ,cpu_count(),"train"+str(norm_type)) 
 #calculate( base_ids[0:10000], xb[0:10000] ,cpu_count()//2) 
-calculate( base_ids , xb  ,cpu_count()//2,"base") 
+calculate( base_ids , xb  ,cpu_count(),"base"+str(norm_type)) 
 #calculate( query_ids, xq, cpu_count()//2 ) 
 #data = l2_dist( xq, xt[0:1] )
 #print(data )
