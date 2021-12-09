@@ -7,7 +7,10 @@ id_str = 0
 
 string2ids = dict()
 sum_num = 0 
-with open("data/combined_clusters_with_references.txt","r") as f:
+file_name = "data/combined_clusters_with_references.txt"
+file_name = "data/SynthDataClusters_09.txt"
+
+with open( file_name,"r") as f:
     lines = f.readlines()
     num = len(lines)
     i = 0
