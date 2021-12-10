@@ -1,6 +1,6 @@
-# [Convolutional Embedding for Edit Distance (SIGIR 20)](https://arxiv.org/abs/2001.11692)
+# CS6219 Project: Clustering with Learned Embedding (P4)
 
-This is the CS6219 module project merged from https://github.com/xinyandai/string-embed.git.
+This is the CS6219 module project merged from https://github.com/xinyandai/string-embed.git based on [Convolutional Embedding for Edit Distance (SIGIR 20)](https://arxiv.org/abs/2001.11692)
 We have modified convolutional neural network structure and execution procedure to predict the clustering status of each DNA strands. 
 There are also preprocess.py for preprocessing DNA data and check_accuracy.py to check the accuracy of embedded vector.
 
